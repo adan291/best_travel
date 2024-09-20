@@ -2,6 +2,9 @@ package com.debuggeando_ideas.best_travel.domain.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Set;
+
 import com.debuggeando_ideas.best_travel.util.AeroLine;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +37,13 @@ public class FlyEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private AeroLine aeroLine;
 
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true,
+            mappedBy = "fly"
+    )
+    private Set<TicketEntity> tickets;
 
 
 
