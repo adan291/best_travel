@@ -5,10 +5,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity(name = "hotel")
 @NoArgsConstructor
@@ -29,6 +26,8 @@ public class HotelEntity implements Serializable {
     private Integer rating;
     private BigDecimal price;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,

@@ -6,10 +6,7 @@ import java.util.Set;
 
 import com.debuggeando_ideas.best_travel.util.AeroLine;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity(name = "fly")
 @NoArgsConstructor
@@ -36,6 +33,8 @@ public class FlyEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private AeroLine aeroLine;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
