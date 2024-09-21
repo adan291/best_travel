@@ -2,7 +2,6 @@ package com.debuggeando_ideas.best_travel;
 
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +38,7 @@ public class BestTravelApplication implements CommandLineRunner {
 		SpringApplication.run(BestTravelApplication.class, args);
 	}
 
-	@Override
+    @Override
 	public void run(String... args) throws Exception {
 
 		//isPresent() es un metodo complejo donde nos permite comprobar si existe un valor y si es asi cogerlo como optional
@@ -48,7 +47,7 @@ public class BestTravelApplication implements CommandLineRunner {
 		var hotel = hotelRepository.findById(7L).isPresent();
 		var reservation = reservationRepository.findById(UUID.fromString("32345678-1234-5678-1234-567812345678")).isPresent();
 		var ticket = ticketRepository.findById(UUID.fromString("32345678-1234-5678-4234-567812345678")).isPresent();
-		var tour = tourRepository.findById(7L).isPresent();;
+		var tour = tourRepository.findById(7L).isPresent();
 
 		log.info(String.valueOf(customer));
 		log.info(String.valueOf(fly));
