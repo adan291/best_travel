@@ -2,7 +2,6 @@ package com.debuggeando_ideas.best_travel.domain.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Set;
 
 import com.debuggeando_ideas.best_travel.util.AeroLine;
