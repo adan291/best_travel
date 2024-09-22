@@ -1,5 +1,8 @@
 package com.debuggeando_ideas.best_travel;
 
+import com.debuggeando_ideas.best_travel.domain.entities.ReservationEntity;
+import com.debuggeando_ideas.best_travel.domain.entities.TicketEntity;
+import com.debuggeando_ideas.best_travel.domain.entities.TourEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -7,7 +10,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
+
 
 @SpringBootApplication
 @Slf4j
@@ -41,8 +47,7 @@ public class BestTravelApplication implements CommandLineRunner {
     @Override
 	public void run(String... args) throws Exception {
 
-		//isPresent() es un metodo complejo donde nos permite comprobar si existe un valor y si es asi cogerlo como optional
-		var customer = customerRepository.findById("VIKI771012HMCRG093").isPresent();
+		/*var customer = customerRepository.findById("VIKI771012HMCRG093").isPresent();
 		var fly = flyRepository.findById(15L).isPresent();
 		var hotel = hotelRepository.findById(7L).isPresent();
 		var reservation = reservationRepository.findById(UUID.fromString("32345678-1234-5678-1234-567812345678")).isPresent();
@@ -68,7 +73,43 @@ public class BestTravelApplication implements CommandLineRunner {
 		this.flyRepository.selectBetweenPrice(BigDecimal.valueOf(10), BigDecimal.valueOf(15)).forEach(System.out::println);
 		
 		System.out.println("-------------------------------------Origin Destiny-------------------------------------");
-		this.flyRepository.selectOriginDestiny("Grecia", "Mexico").forEach(System.out::println);
-	}
+		this.flyRepository.selectOriginDestiny("Grecia", "Mexico").forEach(System.out::println);*/
 
+		var customer = customerRepository.findById("GOTW771012HMRGR087").orElseThrow();
+        log.info("Client name {}", customer.getFullName());
+
+		var fly = flyRepository.findById(11L).orElseThrow();
+		log.info("Fly name " + fly.getDestinyName());
+
+		var hotel = hotelRepository.findById(3L).orElseThrow();
+		log.info("Hotel name " + hotel.getName());
+
+		var tour = TourEntity.builder()
+				.customer(customer)
+				.build();
+
+		var ticket = TicketEntity.builder()
+				.id(UUID.randomUUID())
+				.price(fly.getPrice().multiply(BigDecimal.TEN))
+				.arrivalDate(LocalDate.now())
+				.departureDate(LocalDate.now())
+				.purchaseDate(LocalDate.now())
+				.customer(customer)
+				.tour(tour)
+				.fly(fly)
+				.build();
+
+		var reservation = ReservationEntity.builder()
+				.id(UUID.randomUUID())
+				.dateTimeReservation(LocalDateTime.now())
+				.dateStart(LocalDate.now())
+				.dateEnd(LocalDate.now())
+				.hotel(hotel)
+				.customer(customer)
+				.tour(tour)
+				.totalDays(1)
+				.price(fly.getPrice().multiply(BigDecimal.TEN))
+				.build();
+
+	}
 }
