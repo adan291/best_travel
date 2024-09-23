@@ -19,27 +19,6 @@ import java.util.UUID;
 @Slf4j
 public class BestTravelApplication implements CommandLineRunner {
 
-	private final CustomerRepository customerRepository;
-	private final FlyRepository flyRepository;
-	private final HotelRepository hotelRepository;
-	private final ReservationRepository reservationRepository;
-	private final TicketRepository ticketRepository;
-	private final TourRepository tourRepository;
-
-	//Esto es lo que haria la anotacion @Autowired si lo pusiera encima de cada uno de los atributos de la clase
-    public BestTravelApplication(CustomerRepository customerRepository, FlyRepository flyRepository,
-								 HotelRepository hotelRepository, ReservationRepository reservationRepository,
-								 TicketRepository ticketRepository, TourRepository tourRepository) {
-
-        this.customerRepository = customerRepository;
-        this.flyRepository = flyRepository;
-        this.hotelRepository = hotelRepository;
-        this.reservationRepository = reservationRepository;
-        this.ticketRepository = ticketRepository;
-        this.tourRepository = tourRepository;
-    }
-
-
     public static void main(String[] args) {
 		SpringApplication.run(BestTravelApplication.class, args);
 	}
@@ -73,7 +52,7 @@ public class BestTravelApplication implements CommandLineRunner {
 		this.flyRepository.selectBetweenPrice(BigDecimal.valueOf(10), BigDecimal.valueOf(15)).forEach(System.out::println);
 		
 		System.out.println("-------------------------------------Origin Destiny-------------------------------------");
-		this.flyRepository.selectOriginDestiny("Grecia", "Mexico").forEach(System.out::println);*/
+		this.flyRepository.selectOriginDestiny("Grecia", "Mexico").forEach(System.out::println);
 
 		var customer = customerRepository.findById("GOTW771012HMRGR087").orElseThrow();
         log.info("Client name {}", customer.getFullName());
@@ -119,6 +98,6 @@ public class BestTravelApplication implements CommandLineRunner {
 
 		//var tourSaved = this.tourRepository.save(tour);
 
-		this.tourRepository.deleteById(1L);
+		this.tourRepository.deleteById(1L); */
 	}
 }
