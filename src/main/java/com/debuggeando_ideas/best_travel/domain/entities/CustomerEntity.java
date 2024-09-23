@@ -16,7 +16,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 public class CustomerEntity implements Serializable {
 
     @Id
