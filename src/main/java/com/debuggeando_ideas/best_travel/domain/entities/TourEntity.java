@@ -18,7 +18,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 public class TourEntity implements Serializable {
 
     @Id

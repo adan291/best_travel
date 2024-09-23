@@ -20,7 +20,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 public class TicketEntity implements Serializable {
 
     @Id
