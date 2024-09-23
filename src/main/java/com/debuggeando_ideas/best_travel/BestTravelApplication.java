@@ -111,5 +111,14 @@ public class BestTravelApplication implements CommandLineRunner {
 				.price(fly.getPrice().multiply(BigDecimal.TEN))
 				.build();
 
+		tour.addReservation(reservation);
+		tour.updateReservation();
+
+		tour.addTicket(ticket);
+		tour.updateTicket();
+
+		//var tourSaved = this.tourRepository.save(tour);
+
+		this.tourRepository.deleteById(1L);
 	}
 }
