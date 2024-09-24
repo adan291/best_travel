@@ -1,10 +1,10 @@
 package com.debuggeando_ideas.best_travel.api.models.request;
 
-
 import lombok.*;
 import java.io.Serializable;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter

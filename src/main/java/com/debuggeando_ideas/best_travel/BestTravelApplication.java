@@ -1,32 +1,22 @@
 package com.debuggeando_ideas.best_travel;
 
-import com.debuggeando_ideas.best_travel.domain.entities.ReservationEntity;
-import com.debuggeando_ideas.best_travel.domain.entities.TicketEntity;
-import com.debuggeando_ideas.best_travel.domain.entities.TourEntity;
-import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 
 @SpringBootApplication
 @Slf4j
-public class BestTravelApplication implements CommandLineRunner {
+public class BestTravelApplication {
 
     public static void main(String[] args) {
 		SpringApplication.run(BestTravelApplication.class, args);
 	}
 
-    @Override
-	public void run(String... args) throws Exception {
-
-		/*var customer = customerRepository.findById("VIKI771012HMCRG093").isPresent();
+	/*public void run(String... args) throws Exception {
+       //Faltaria implementar en la class el CommandLineRunner 
+		var customer = customerRepository.findById("VIKI771012HMCRG093").isPresent();
 		var fly = flyRepository.findById(15L).isPresent();
 		var hotel = hotelRepository.findById(7L).isPresent();
 		var reservation = reservationRepository.findById(UUID.fromString("32345678-1234-5678-1234-567812345678")).isPresent();
@@ -98,6 +88,6 @@ public class BestTravelApplication implements CommandLineRunner {
 
 		//var tourSaved = this.tourRepository.save(tour);
 
-		this.tourRepository.deleteById(1L); */
-	}
+		this.tourRepository.deleteById(1L);
+	}*/
 }

@@ -6,7 +6,7 @@ public interface CrudService <RQ, RS, ID>{
 
     RS read(ID id);
 
-    RS update(RQ request, ID id);
+    RS update(ID id, RQ request);
 
     void delete(ID id);
 

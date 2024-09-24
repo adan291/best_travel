@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter
