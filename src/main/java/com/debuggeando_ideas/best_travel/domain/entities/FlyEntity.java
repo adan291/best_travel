@@ -3,11 +3,8 @@ package com.debuggeando_ideas.best_travel.domain.entities;
 import com.debuggeando_ideas.best_travel.util.AeroLine;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "fly")
