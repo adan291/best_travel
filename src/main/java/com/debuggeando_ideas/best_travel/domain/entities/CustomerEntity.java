@@ -3,10 +3,7 @@ package com.debuggeando_ideas.best_travel.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
-
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "customer")
@@ -65,20 +62,4 @@ public class CustomerEntity implements Serializable {
             mappedBy = "customer"
     )
     private Set<TourEntity> tours;
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        CustomerEntity that = (CustomerEntity) o;
-        return getDni() != null && Objects.equals(getDni(), that.getDni());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
-    }
 }

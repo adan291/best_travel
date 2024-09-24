@@ -28,13 +28,16 @@ public class TicketEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fly_id")
+    @ToString.Exclude
     private FlyEntity fly;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id")
+    @ToString.Exclude
     private TourEntity tour;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
+    @ToString.Exclude
     private CustomerEntity customer;
 }
