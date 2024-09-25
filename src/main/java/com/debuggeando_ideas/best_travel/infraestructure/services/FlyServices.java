@@ -5,7 +5,6 @@ import com.debuggeando_ideas.best_travel.domain.entities.FlyEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IFlyService;
 import com.debuggeando_ideas.best_travel.util.SortType;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -13,12 +12,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @Slf4j
 @AllArgsConstructor

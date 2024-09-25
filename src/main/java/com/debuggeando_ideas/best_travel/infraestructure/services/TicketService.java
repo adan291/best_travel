@@ -6,6 +6,7 @@ import com.debuggeando_ideas.best_travel.api.models.responses.TicketResponse;
 import com.debuggeando_ideas.best_travel.domain.entities.TicketEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.ITicketService;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
 import com.debuggeando_ideas.best_travel.util.BestTravelUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,7 @@ public class TicketService implements ITicketService {
     private final CustomerRepository customerRepository;
     private final FlyRepository flyRepository;
     private final TicketRepository ticketRepository;
+    private final CustomerHelper customerHelper;
 
     private static final BigDecimal charger_price_porcentage = BigDecimal.valueOf(0.25);
 
@@ -51,6 +53,7 @@ public class TicketService implements ITicketService {
 
        log.info("Ticket saved with id {}", ticketPersisted.getId());
 
+       this.customerHelper.incrase(customer.getDni(), TicketService.class);
        return this.entityToResponse(ticketPersisted);
     }
 

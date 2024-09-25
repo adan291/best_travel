@@ -6,6 +6,7 @@ import com.debuggeando_ideas.best_travel.api.models.responses.ReservationRespons
 import com.debuggeando_ideas.best_travel.domain.entities.ReservationEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IReservationService;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class ReservationService implements IReservationService {
     private final CustomerRepository customerRepository;
     private final HotelRepository hotelRepository;
     private final ReservationRepository reservationRepository;
+    private final CustomerHelper customerHelper;
 
     @Override
     public ReservationResponse create(ReservationRequest request) {
@@ -44,6 +46,7 @@ public class ReservationService implements IReservationService {
                 .build();
 
         var reservationPersisted = this.reservationRepository.save(reservationToPersist);
+        this.customerHelper.incrase(customer.getDni(), ReservationService.class);
 
         return this.entityToResponse(reservationPersisted);
     }

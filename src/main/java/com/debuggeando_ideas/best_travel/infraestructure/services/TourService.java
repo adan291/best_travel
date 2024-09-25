@@ -6,6 +6,7 @@ import com.debuggeando_ideas.best_travel.api.models.responses.TourResponse;
 import com.debuggeando_ideas.best_travel.domain.entities.*;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.ITourService;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.TourHelper;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -29,6 +30,8 @@ public class TourService implements ITourService {
     private final TourRepository tourRepository;
     private final FlyRepository flyRepository;
     private final TourHelper tourHelper;
+    private final CustomerHelper customerHelper;
+
 
     @Override
     public TourResponse create(TourRequest request) {
@@ -49,6 +52,7 @@ public class TourService implements ITourService {
 
         var tourSaved = this.tourRepository.save(tourToSave);
 
+        this.customerHelper.incrase(customer.getDni(), TourService.class);
         return TourResponse.builder()
                 .reservationsIds(tourSaved.getReservations().stream().map(ReservationEntity::getId).collect(Collectors.toSet()))
                 .ticketsIds(tourSaved.getTickets().stream().map(TicketEntity::getId).collect(Collectors.toSet()))
@@ -105,10 +109,11 @@ public class TourService implements ITourService {
     }
 
     @Override
-    public UUID addReservation(Long tourId, Long reservationId, Integer totalDays) {
+    public UUID addReservation(Long tourId, Long hotelId, Integer totalDays) {
 
         var tourUpdate = this.tourRepository.findById(tourId).orElseThrow();
-        var hotel = this.hotelRepository.findById(tourId).orElseThrow();
+
+        var hotel = this.hotelRepository.findById(hotelId).orElseThrow();
         var reservation = this.tourHelper.createReservation(hotel, tourUpdate.getCustomer(), totalDays);
 
         tourUpdate.addReservation(reservation);
