@@ -1,9 +1,7 @@
 package com.debuggeando_ideas.best_travel.infraestructure.services;
 
 import com.debuggeando_ideas.best_travel.api.models.responses.FlyResponse;
-import com.debuggeando_ideas.best_travel.api.models.responses.TicketResponse;
 import com.debuggeando_ideas.best_travel.domain.entities.FlyEntity;
-import com.debuggeando_ideas.best_travel.domain.entities.TicketEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.FlyRepository;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IFlyService;
 import com.debuggeando_ideas.best_travel.util.SortType;
