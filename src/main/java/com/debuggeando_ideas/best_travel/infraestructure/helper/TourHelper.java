@@ -6,6 +6,7 @@ import com.debuggeando_ideas.best_travel.util.BestTravelUtil;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -70,4 +71,35 @@ public class TourHelper {
         return response;
     }
 
+    public TicketEntity createTicket(FlyEntity fly, CustomerEntity customer){
+
+        var ticketToPersist = TicketEntity.builder()
+                .id(UUID.randomUUID())
+                .fly(fly)
+                .customer(customer)
+                .price(fly.getPrice().add(fly.getPrice().multiply(BigDecimal.valueOf(Math.random()))))
+                .purchaseDate(LocalDate.now())
+                .arrivalDate(BestTravelUtil.getRandomLatter())
+                .departureDate(BestTravelUtil.getRandomSoon())
+                .build();
+
+
+        return this.ticketRepository.save(ticketToPersist);
+    }
+
+    public ReservationEntity createReservation(HotelEntity hotel, CustomerEntity customer, Integer totalDays){
+
+        var reservationToPersist = ReservationEntity.builder()
+                .id(UUID.randomUUID())
+                .hotel(hotel)
+                .customer(customer)
+                .totalDays(totalDays)
+                .dateTimeReservation(LocalDateTime.now())
+                .dateStart(LocalDate.now())
+                .dateEnd(LocalDate.now().plusDays(totalDays))
+                .price(hotel.getPrice().add(hotel.getPrice().multiply(BigDecimal.valueOf(Math.random()))))
+                .build();
+
+        return this.reservationRepository.save(reservationToPersist);
+    }
 }
