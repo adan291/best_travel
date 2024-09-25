@@ -6,6 +6,7 @@ import com.debuggeando_ideas.best_travel.api.models.responses.ReservationRespons
 import com.debuggeando_ideas.best_travel.domain.entities.ReservationEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IReservationService;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.BlackListHelper;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
 import com.debuggeando_ideas.best_travel.util.exceptions.IdNotFoundException;
 import jakarta.transaction.Transactional;
@@ -29,9 +30,11 @@ public class ReservationService implements IReservationService {
     private final HotelRepository hotelRepository;
     private final ReservationRepository reservationRepository;
     private final CustomerHelper customerHelper;
+    private final BlackListHelper blackListHelper;
 
     @Override
     public ReservationResponse create(ReservationRequest request) {
+        blackListHelper.isInBlackListCustomer(request.getIdClient());
         var hotel = this.hotelRepository.findById(request.getIdHotel()).orElseThrow(() -> new IdNotFoundException("hotel"));
         var customer = this.customerRepository.findById(request.getIdClient()).orElseThrow(() -> new IdNotFoundException("reservation"));
 
