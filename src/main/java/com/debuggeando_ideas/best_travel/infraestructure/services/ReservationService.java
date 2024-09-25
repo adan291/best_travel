@@ -7,6 +7,7 @@ import com.debuggeando_ideas.best_travel.domain.entities.ReservationEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IReservationService;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
+import com.debuggeando_ideas.best_travel.util.exceptions.IdNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,8 @@ public class ReservationService implements IReservationService {
 
     @Override
     public ReservationResponse create(ReservationRequest request) {
-        var hotel = this.hotelRepository.findById(request.getIdHotel()).orElseThrow();
-        var customer = this.customerRepository.findById(request.getIdClient()).orElseThrow();
+        var hotel = this.hotelRepository.findById(request.getIdHotel()).orElseThrow(() -> new IdNotFoundException("hotel"));
+        var customer = this.customerRepository.findById(request.getIdClient()).orElseThrow(() -> new IdNotFoundException("reservation"));
 
         var reservationToPersist = ReservationEntity.builder()
                 .id(UUID.randomUUID())
