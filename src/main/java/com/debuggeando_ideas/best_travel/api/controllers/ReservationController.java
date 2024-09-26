@@ -3,6 +3,7 @@ package com.debuggeando_ideas.best_travel.api.controllers;
 import com.debuggeando_ideas.best_travel.api.models.request.ReservationRequest;
 import com.debuggeando_ideas.best_travel.api.models.responses.ReservationResponse;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IReservationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "reservation")
 @AllArgsConstructor
+@Tag(name = "Reservation")
 public class ReservationController {
 
     private final IReservationService reservationService;

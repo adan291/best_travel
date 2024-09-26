@@ -3,6 +3,10 @@ package com.debuggeando_ideas.best_travel.api.controllers;
 import com.debuggeando_ideas.best_travel.api.models.request.TourRequest;
 import com.debuggeando_ideas.best_travel.api.models.responses.TourResponse;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.ITourService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,22 +17,28 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "tour")
 @AllArgsConstructor
+@Tag(name = "Tour")
 public class TourController {
 
     private final ITourService tourService;
 
 
+    @Operation(summary = "Save in system a tour based in list of hotels and flights")
     @PostMapping
     public ResponseEntity<TourResponse> post(@RequestBody TourRequest request){
         return ResponseEntity.ok(this.tourService.create(request));
     }
 
+    @Operation(summary= "Gets customer by ID", description= "Customer must exist")
     @GetMapping(path ="{id}")
     public ResponseEntity<TourResponse> get(@PathVariable Long id){
         return ResponseEntity.ok(this.tourService.read(id));
     }
 
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Invalid ID supplied"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")})
     @DeleteMapping(path ="{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
         this.tourService.delete(id);
