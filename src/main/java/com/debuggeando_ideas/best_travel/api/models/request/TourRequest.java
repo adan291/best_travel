@@ -1,5 +1,6 @@
 package com.debuggeando_ideas.best_travel.api.models.request;
 
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 import java.io.Serializable;
@@ -16,4 +17,6 @@ public class TourRequest implements Serializable {
     private String customerId;
     private Set<TourFlyRequest> flights;
     private Set<TourHotelRequest> hotels;
+    @Email
+    private String email;
 }
