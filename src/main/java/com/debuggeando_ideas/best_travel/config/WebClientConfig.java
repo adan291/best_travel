@@ -17,7 +17,6 @@ public class WebClientConfig {
     @Value(value = "${api.api-key.header}")
     private String apiKeyHeader;
 
-
     @Bean(name = "currency")
     @Primary
     public WebClient webClient(){
