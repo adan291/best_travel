@@ -6,6 +6,7 @@ import com.debuggeando_ideas.best_travel.api.models.responses.TicketResponse;
 import com.debuggeando_ideas.best_travel.domain.entities.TicketEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.ITicketService;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.ApiCurrencyConnectorHelper;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.BlackListHelper;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
 import com.debuggeando_ideas.best_travel.util.BestTravelUtil;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Currency;
 import java.util.Random;
 import java.util.UUID;
 
@@ -33,6 +35,8 @@ public class TicketService implements ITicketService {
     private final TicketRepository ticketRepository;
     private final CustomerHelper customerHelper;
     private final BlackListHelper blackListHelper;
+
+    private final ApiCurrencyConnectorHelper currencyConnectorHelper;
 
     private static final BigDecimal charger_price_porcentage = BigDecimal.valueOf(0.25);
 
@@ -108,5 +112,16 @@ public class TicketService implements ITicketService {
     public BigDecimal findPrice(Long idFly) {
         var flyPrice = this.flyRepository.findById(idFly).orElseThrow();
         return flyPrice.getPrice().add(flyPrice.getPrice().multiply(BigDecimal.valueOf(Math.random())));
+    }
+
+    @Override
+    public BigDecimal findPrice(Long flyId, Currency currency) {
+        var fly = this.flyRepository.findById(flyId).orElseThrow();
+        if (currency.equals(Currency.getInstance("USD"))) return fly.getPrice().add(fly.getPrice().multiply
+                (fly.getPrice().multiply(BigDecimal.valueOf(Math.random()))));
+        var currencyDTO = this.currencyConnectorHelper.getCurrency(currency);
+        log.info("API currency in {}, response: {}", currencyDTO.getExchangeDate().toString(), currencyDTO.getRates());
+        return fly.getPrice().add(fly.getPrice().multiply
+                (fly.getPrice().multiply(BigDecimal.valueOf(Math.random())))).multiply(currencyDTO.getRates().get(currency));
     }
 }

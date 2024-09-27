@@ -6,8 +6,10 @@ import com.debuggeando_ideas.best_travel.api.models.responses.ReservationRespons
 import com.debuggeando_ideas.best_travel.domain.entities.ReservationEntity;
 import com.debuggeando_ideas.best_travel.domain.repositories.*;
 import com.debuggeando_ideas.best_travel.infraestructure.abstract_services.IReservationService;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.ApiCurrencyConnectorHelper;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.BlackListHelper;
 import com.debuggeando_ideas.best_travel.infraestructure.helper.CustomerHelper;
+import com.debuggeando_ideas.best_travel.infraestructure.helper.EmailHelper;
 import com.debuggeando_ideas.best_travel.util.exceptions.IdNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Currency;
+import java.util.Objects;
 import java.util.UUID;
 
 @Transactional
@@ -31,6 +35,9 @@ public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
     private final CustomerHelper customerHelper;
     private final BlackListHelper blackListHelper;
+
+    private final ApiCurrencyConnectorHelper currencyConnectorHelper;
+    private final EmailHelper emailHelper;
 
     @Override
     public ReservationResponse create(ReservationRequest request) {
@@ -51,6 +58,8 @@ public class ReservationService implements IReservationService {
 
         var reservationPersisted = this.reservationRepository.save(reservationToPersist);
         this.customerHelper.incrase(customer.getDni(), ReservationService.class);
+
+        if(Objects.nonNull(request.getEmail())) this.emailHelper.sendMail(request.getEmail(), customer.getFullName(), "reservation");
 
         return this.entityToResponse(reservationPersisted);
     }
@@ -106,5 +115,19 @@ public class ReservationService implements IReservationService {
     public BigDecimal findPrice(Long hotelId) {
         var hotelPrice = this.hotelRepository.findById(hotelId).orElseThrow();
         return hotelPrice.getPrice().add(hotelPrice.getPrice().multiply(BigDecimal.valueOf(Math.random())));
+    }
+
+    @Override
+    public BigDecimal findPrice(Long hotelId, Currency currency) {
+        var hotelPrice = this.hotelRepository.findById(hotelId).orElseThrow();
+        var priceInDollars = hotelPrice.getPrice().add(hotelPrice.getPrice().add
+                (hotelPrice.getPrice().multiply(BigDecimal.valueOf(Math.random()))));
+        if(currency.equals(Currency.getInstance("USD")))return priceInDollars;
+
+        var currencyDTO = this.currencyConnectorHelper.getCurrency(currency);
+
+        log.info("API CURRENCY in {}, response: {}", currencyDTO.getExchangeDate().toString(), currencyDTO.getRates());
+
+        return priceInDollars.multiply(currencyDTO.getRates().get(currency));
     }
 }
