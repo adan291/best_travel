@@ -7,7 +7,6 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.spring.cache.CacheConfig;
 import org.redisson.spring.cache.RedissonSpringCacheManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,39 +26,41 @@ import java.util.Map;
 @EnableScheduling
 public class RedisConfig {
 
-    @Value(value = "${cache.redis.address}")
-    private String serverAdress;
-    @Value(value = "${cache.redis.password}")
-    private String serverPasswords;
+    @Value("${cache.redis.address}")
+    private String serverAddress;
 
+    @Value("${cache.redis.password}")
+    private String serverPassword;
 
-    public RedissonClient redissonClient(){
+    @Bean
+    public RedissonClient redissonClient() {
         var config = new Config();
-        //Use cluster prod
+
+        // Configuración de servidor único
         config.useSingleServer()
-                .setAddress(serverAdress)
-                .setPassword(serverPasswords);
+                .setAddress(serverAddress)
+                .setPassword(serverPassword);
 
         return Redisson.create(config);
     }
 
     @Bean
-    @Autowired
     public CacheManager cacheManager(RedissonClient redissonClient) {
+        // Aquí puedes configurar el TTL (time to live) y maxIdleTime
         var configs = Map.of(
-                CacheConstants.FLY_CACHE_NAME, new CacheConfig(),
-                CacheConstants.HOTEL_CACHE_NAME, new CacheConfig()
+                CacheConstants.FLY_CACHE_NAME, new CacheConfig(60 * 1000, 30 * 1000),  // Ejemplo: 1 min TTL, 30 seg idle
+                CacheConstants.HOTEL_CACHE_NAME, new CacheConfig(60 * 1000, 30 * 1000)  // Configura según tu necesidad
         );
         return new RedissonSpringCacheManager(redissonClient, configs);
     }
 
-    @CacheEvict(cacheNames={
+    @CacheEvict(cacheNames = {
             CacheConstants.FLY_CACHE_NAME,
             CacheConstants.HOTEL_CACHE_NAME
     }, allEntries = true)
     @Scheduled(cron = CacheConstants.SCHEDULED_RESET_CACHE)
     @Async
-    public void deleteCache(){
-        log.info("Clean cache");
+    public void deleteCache() {
+        log.info("Limpieza de cache ejecutada");
     }
 }
