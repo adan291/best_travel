@@ -37,7 +37,7 @@ public class AppUserController {
 
     @Operation(summary = "Add role")
     @PatchMapping(path = "add-role")
-    public ResponseEntity<Map<String, List<String>>> addRole
+    public ResponseEntity<Map<String, Set<String>>> addRole
             (@RequestParam String username, @RequestParam String role){
 
         return ResponseEntity.ok(this.modifyUserService.addRole(username, role));
@@ -45,7 +45,7 @@ public class AppUserController {
 
     @Operation(summary = "Remove role")
     @PatchMapping(path = "remove-role")
-    public ResponseEntity<Map<String, List<String>>> removeRole
+    public ResponseEntity<Map<String,Set<String>>> removeRole
             (@RequestParam String username, @RequestParam String role){
 
         return ResponseEntity.ok(this.modifyUserService.removeRole(username, role));

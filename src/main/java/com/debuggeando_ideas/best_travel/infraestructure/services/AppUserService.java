@@ -5,14 +5,17 @@ import com.debuggeando_ideas.best_travel.infraestructure.ModifyUserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class AppUserService implements ModifyUserService {
+@Transactional
+public class AppUserService implements ModifyUserService /*UserDetailsServiceAutoConfiguration*/ {
 
     private final AppUserRepository appUserRepository;
 
@@ -25,7 +28,7 @@ public class AppUserService implements ModifyUserService {
     }
 
     @Override
-    public Map<String, List<String>> addRole(String username, String role) {
+    public Map<String, Set<String>> addRole(String username, String role) {
         var user = this.appUserRepository.findByUsername(username).orElseThrow();
         user.getRole().getGrantedAuthorities().add(role);
         var userSaved = this.appUserRepository.save(user);
@@ -34,11 +37,17 @@ public class AppUserService implements ModifyUserService {
     }
 
     @Override
-    public Map<String, List<String>> removeRole(String username, String role) {
+    public Map<String, Set<String>> removeRole(String username, String role) {
         var user = this.appUserRepository.findByUsername(username).orElseThrow();
         user.getRole().getGrantedAuthorities().remove(role);
         var userSaved = this.appUserRepository.save(user);
         var authorities = userSaved.getRole().getGrantedAuthorities();
         return Collections.singletonMap(userSaved.getUsername(), authorities);
+    }
+
+
+    @Transactional(readOnly = true)
+    private void loadByUserName(String username){
+        var user = this.appUserRepository.findByUsername(username).orElseThrow();
     }
 }
