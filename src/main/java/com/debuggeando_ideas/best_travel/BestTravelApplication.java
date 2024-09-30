@@ -1,33 +1,20 @@
 package com.debuggeando_ideas.best_travel;
 
-import com.debuggeando_ideas.best_travel.domain.repositories.mongo.AppUserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @SpringBootApplication
 @Slf4j
-public class BestTravelApplication implements CommandLineRunner{
+public class BestTravelApplication {
 
     public static void main(String[] args) {
 		SpringApplication.run(BestTravelApplication.class, args);
 	}
 
-
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	@Autowired
-	private AppUserRepository appUserRepository;
-
-
-	public void run(String... args) throws Exception {
-		/*
-       //Faltaria implementar en la class el CommandLineRunner 
+	/*public void run(String... args) throws Exception {
+       //Faltaria implementar en la class el CommandLineRunner
 		var customer = customerRepository.findById("VIKI771012HMCRG093").isPresent();
 		var fly = flyRepository.findById(15L).isPresent();
 		var hotel = hotelRepository.findById(7L).isPresent();
@@ -52,7 +39,7 @@ public class BestTravelApplication implements CommandLineRunner{
 
 		System.out.println("-------------------------------------Between Price-------------------------------------");
 		this.flyRepository.selectBetweenPrice(BigDecimal.valueOf(10), BigDecimal.valueOf(15)).forEach(System.out::println);
-		
+
 		System.out.println("-------------------------------------Origin Destiny-------------------------------------");
 		this.flyRepository.selectOriginDestiny("Grecia", "Mexico").forEach(System.out::println);
 
@@ -100,6 +87,6 @@ public class BestTravelApplication implements CommandLineRunner{
 
 		//var tourSaved = this.tourRepository.save(tour);
 
-		this.tourRepository.deleteById(1L);*/
-	}
+		this.tourRepository.deleteById(1L);
+	}*/
 }

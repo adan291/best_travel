@@ -26,6 +26,8 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
@@ -45,7 +47,7 @@ public class SecurityConfig {
     private static final String[] USER_RESOURCES = {"/tour/**","/ticket/**","/reservation/**"};
     private static final String[] ADMIN_RESOURCES = {"/user/**", "/report/**"};
     private static final String LOGIN_RESOURCE = "/login";
-    private static final String ADMIN_ROLE = "ADMIN";
+    private static final String ROLE_ADMIN = "ADMIN";  // Usamos ADMIN sin el prefijo "ROLE_"
 
     @Value("${app.client.id}")
     private String clientId;
@@ -73,7 +75,7 @@ public class SecurityConfig {
     public RegisteredClientRepository registeredClientRepository(BCryptPasswordEncoder encoder){
         var registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId(clientId)
-                .clientSecret(encoder.encode(clientSecret))  // Asegúrate de codificar el secreto
+                .clientSecret(encoder.encode(clientSecret))
                 .scope(scopeRead)
                 .scope(scopeWrite)
                 .redirectUri(redirectUri1)
@@ -83,6 +85,20 @@ public class SecurityConfig {
                 .build();
 
         return new InMemoryRegisteredClientRepository(registeredClient);
+    }
+
+    @Bean
+    public JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter(){
+        var converted = new JwtGrantedAuthoritiesConverter();
+        converted.setAuthorityPrefix("");
+        return converted;
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter(JwtGrantedAuthoritiesConverter jwtGAC){
+        var converted = new JwtAuthenticationConverter();
+        converted.setJwtGrantedAuthoritiesConverter(jwtGAC);
+        return converted;
     }
 
     @Bean
@@ -97,12 +113,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(PUBLIC_RESOURCES).permitAll()  // Recursos públicos permitidos
                         .requestMatchers(USER_RESOURCES).authenticated()  // Recursos que requieren autenticación
-                        .requestMatchers(ADMIN_RESOURCES).hasRole(ADMIN_ROLE)  // Recursos para admin
+                        .requestMatchers(ADMIN_RESOURCES).hasRole(ROLE_ADMIN)  // Recursos para admin
                 )
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll  // Permitir a todos acceder a la página de inicio de sesión
+                .formLogin(form -> form  // Permitir a todos acceder a la página de inicio de sesión
+                        .loginPage(LOGIN_RESOURCE)  // Página de login personalizada
+                        .permitAll()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(jwtDecoder()))  // Configura el decoder con una clave secreta
+                        .jwt(jwt -> jwt.decoder(jwtDecoder()))  // Configura el decoder de JWT (HMAC o RSA)
                 );
 
         // Configuración del servidor de autorización OAuth2
@@ -116,6 +134,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // Decodificador de JWT utilizando HMAC (clave secreta)
     @Bean
     public JwtDecoder jwtDecoder() {
         // Usa una clave secreta para decodificar los JWT
@@ -123,6 +142,15 @@ public class SecurityConfig {
         return NimbusJwtDecoder.withSecretKey(new SecretKeySpec(secretKey.getBytes(), "HmacSHA256")).build();
     }
 
+    // Decodificador de JWT usando RSA (si decides usar claves públicas/privadas en lugar de HMAC)
+    @Bean
+    public JWKSource<SecurityContext> jwkSource(){
+        var rsaKey = generateKeys();
+        var jwkSet = new JWKSet(rsaKey);
+        return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
+    }
+
+    // Configuración de autenticación con BCrypt
     @Bean
     public AuthenticationProvider authenticationProvider(BCryptPasswordEncoder encoder){
         var authenticationProvider = new DaoAuthenticationProvider();
@@ -136,38 +164,36 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public JWKSource<SecurityContext> jwkSource(){
-        var rsaKey = generateKeys();
-        var jwkSet = new JWKSet(rsaKey);
-        return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
-    }
-
+    // Configuración de los tokens, por ejemplo, tiempo de vida del token de refresco
     @Bean
     public TokenSettings tokenSettings(){
         return TokenSettings.builder()
-                .refreshTokenTimeToLive(Duration.ofHours(8))
+                .refreshTokenTimeToLive(Duration.ofHours(8))  // Personaliza la duración del refresh token
                 .build();
     }
 
+    // Generar par de claves RSA
     private static KeyPair generateRSA(){
         KeyPair keyPair = null;
         try {
             var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
             keyPair = keyPairGenerator.generateKeyPair();
-        }catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
-
         return keyPair;
     }
 
+    // Generar clave RSA para JWK
     private static RSAKey generateKeys(){
         var keyPair = generateRSA();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-        return new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
+        return new RSAKey.Builder(publicKey)
+                .privateKey(privateKey)
+                .keyID(UUID.randomUUID().toString())
+                .build();
     }
 }
